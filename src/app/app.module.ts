@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
@@ -14,7 +15,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CabecalhoComponent } from './cabecalho/cabecalho.component';
 import { ClienteListaComponent } from './clientes/cliente-lista/cliente-lista.component';
 
-import { ClienteService} from './clientes/cliente.sevice'
+import { ClienteService } from './clientes/cliente.sevice';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { ClienteService} from './clientes/cliente.sevice'
     MatButtonModule,
     MatToolbarModule,
     MatExpansionModule,
+    HttpClientModule,
   ],
   providers: [ClienteService],
   bootstrap: [AppComponent],

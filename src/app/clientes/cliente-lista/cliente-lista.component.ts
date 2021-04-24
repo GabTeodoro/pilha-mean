@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Cliente } from '../cliente.model';
 import { ClienteService } from '../cliente.sevice';
-import {Subscription, Observable} from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-cliente-lista',
@@ -15,7 +15,7 @@ export class ClienteListaComponent implements OnInit, OnDestroy {
   constructor(public clienteService: ClienteService) {}
 
   ngOnInit(): void {
-    this.clientes = this.clienteService.getClientes();
+    this.clienteService.getClientes();
     this.clientesSubscription = this.clienteService
       .getListaDeClientesAtualizadaObservable()
       .subscribe((clientes: Cliente[]) => {
@@ -23,7 +23,7 @@ export class ClienteListaComponent implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy(): void{
+  ngOnDestroy(): void {
     this.clientesSubscription.unsubscribe();
   }
 }
