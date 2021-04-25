@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Cliente } from '../cliente.model';
-import { ClienteService } from '../cliente.sevice';
+import { ClienteService } from '../cliente.service';
 import { Subscription, Observable } from 'rxjs';
 
 @Component({
@@ -13,6 +13,10 @@ export class ClienteListaComponent implements OnInit, OnDestroy {
   private clientesSubscription: Subscription;
 
   constructor(public clienteService: ClienteService) {}
+
+  onDelete(id: string): void {
+    this.clienteService.removerCliente(id);
+  }
 
   ngOnInit(): void {
     this.clienteService.getClientes();

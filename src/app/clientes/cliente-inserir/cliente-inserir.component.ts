@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { ClienteService } from '../cliente.sevice';
+import { ClienteService } from '../cliente.service';
 
 @Component({
   selector: 'app-cliente-inserir',
