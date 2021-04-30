@@ -77,4 +77,28 @@ app.delete("/api/clientes/:id", (req, res, next) => {
   });
 });
 
+app.put("/api/clientes/:id", (req, res, next) => {
+  const cliente = new Cliente({
+    _id: req.params.id,
+    nome: req.body.nome,
+    fone: req.body.fone,
+    email: req.body.email,
+  });
+
+  Cliente.updateOne({ _id: req.params.id }, cliente).then((resultado) => {
+    console.log(resultado);
+  });
+  res.status(200).json({ mensagem: "Atualização feita com sucesso" });
+});
+
+app.get("/api/clientes/:id", (req, res, next) => {
+  Cliente.findById(req.params.id).then((cli) => {
+    if (cli) {
+      res.status(200).json(cli);
+    } else {
+      res.status(400).json({ mensagem: "Cliente não encontrado!" });
+    }
+  });
+});
+
 module.exports = app;
