@@ -29,6 +29,7 @@ export class ClienteService {
               nome: cliente.nome,
               fone: cliente.fone,
               email: cliente.email,
+              imagemURL: cliente.imagemURL
             };
           });
         })
@@ -43,23 +44,35 @@ export class ClienteService {
     return this.listaClientesAtualizada.asObservable();
   }
 
-  adicionarCliente(nome: string, fone: string, email: string) {
-    const cliente: Cliente = {
-      id: null,
-      nome: nome,
-      fone: fone,
-      email: email,
-    };
+  adicionarCliente(nome: string, fone: string, email: string, imagem: File) {
+    // const cliente: Cliente = {
+    //   id: null,
+    //   nome: nome,
+    //   fone: fone,
+    //   email: email,
+    // };
+    const dadosCliente = new FormData();
+    dadosCliente.append('nome', nome);
+    dadosCliente.append('fone', fone);
+    dadosCliente.append('email', email);
+    dadosCliente.append('imagem', imagem);
     this.httpClient
-      .post<{ mensagem: string; id: string }>(
+      .post<{ mensagem: string; cliente: Cliente }>(
         'http://localhost:3000/api/clientes',
-        cliente
+        dadosCliente
       )
       .subscribe((dados) => {
-        cliente.id = dados.id;
+        // cliente.id = dados.id;
+        const cliente: Cliente = {
+          id: dados.cliente.id,
+          nome: nome,
+          fone: fone,
+          email: email,
+          imagemURL: dados.cliente.imagemURL
+        };
         this.clientes.push(cliente);
         this.listaClientesAtualizada.next([...this.clientes]);
-        this.router.navigate(['/'])
+        this.router.navigate(['/']);
       });
   }
 
@@ -85,17 +98,17 @@ export class ClienteService {
   }
 
   atualizarCliente(id: string, nome: string, fone: string, email: string) {
-    const cliente: Cliente = { id, nome, fone, email };
-    console.log('************** Vai atualizar... *************')
+    const cliente: Cliente = { id, nome, fone, email, imagemURL: null };
+    console.log('************** Vai atualizar... *************');
     this.httpClient
       .put(`http://localhost:3000/api/clientes/${id}`, cliente)
       .subscribe((res) => {
         const copia = [...this.clientes];
-        const indice = copia.findIndex(cli => cli.id === cliente.id);
+        const indice = copia.findIndex((cli) => cli.id === cliente.id);
         copia[indice] = cliente;
         this.clientes = copia;
         this.listaClientesAtualizada.next([...this.clientes]);
-        this.router.navigate(['/'])
+        this.router.navigate(['/']);
       });
   }
 }
