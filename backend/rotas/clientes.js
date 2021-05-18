@@ -55,21 +55,22 @@ router.get("", (req, res, next) => {
   const pageSize = +req.query.pagasize;
   const page = +req.query.page;
   const consulta = Cliente.find();
+  let clientesEncontrados;
   if (pageSize && page) {
     consulta.skip(pageSize * (page - 1)).limit(pageSize);
   }
-  consulta.then((documents) => {
-    res.status(200).json({
-      mensagem: "Tudo OK",
-      clientes: documents,
+  consulta
+    .then((documents) => {
+      clientesEncontrados = documents;
+      return Cliente.count();
+    })
+    .then((count) => {
+      res.status(200).json({
+        mensagem: "Tudo OK",
+        clientes: clientesEncontrados,
+        maxClientes: count,
+      });
     });
-  });
-  // Cliente.find().then((documents) => {
-  //   res.status(200).json({
-  //     mensagem: "Tudo OK",
-  //     clientes: documents,
-  //   });
-  // });
 });
 
 router.delete("/:id", (req, res, next) => {

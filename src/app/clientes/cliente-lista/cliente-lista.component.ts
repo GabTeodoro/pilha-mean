@@ -13,7 +13,7 @@ export class ClienteListaComponent implements OnInit, OnDestroy {
   clientes: Cliente[] = [];
   private clientesSubscription: Subscription;
   public estaCarregando = false;
-  totalDeClientes: number = 10;
+  totalDeClientes: number = 0;
   totalDeClientesPorPagina = 2;
   opcoesTotalDeClientesPorPagina = [2, 5, 10];
   paginaAtual: number = 1;
@@ -22,17 +22,27 @@ export class ClienteListaComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.estaCarregando = true;
-    this.clienteService.getClientes(this.totalDeClientesPorPagina, this.paginaAtual);
+    this.clienteService.getClientes(
+      this.totalDeClientesPorPagina,
+      this.paginaAtual
+    );
     this.clientesSubscription = this.clienteService
       .getListaDeClientesAtualizadaObservable()
-      .subscribe((clientes: Cliente[]) => {
+      .subscribe((dados: { clientes: []; maxClientes: number }) => {
         this.estaCarregando = false;
-        this.clientes = clientes;
+        this.clientes = dados.clientes;
+        this.totalDeClientes = dados.maxClientes;
       });
   }
 
   onDelete(id: string): void {
-    this.clienteService.removerCliente(id);
+    this.estaCarregando = true;
+    this.clienteService.removerCliente(id).subscribe(() => {
+      this.clienteService.getClientes(
+        this.totalDeClientesPorPagina,
+        this.paginaAtual
+      );
+    });
   }
 
   ngOnDestroy(): void {
@@ -44,6 +54,9 @@ export class ClienteListaComponent implements OnInit, OnDestroy {
     this.estaCarregando = true;
     this.paginaAtual = dadosPagina.pageIndex + 1;
     this.totalDeClientesPorPagina = dadosPagina.pageSize;
-    this.clienteService.getClientes(this.totalDeClientesPorPagina, this.paginaAtual)
+    this.clienteService.getClientes(
+      this.totalDeClientesPorPagina,
+      this.paginaAtual
+    );
   }
 }
