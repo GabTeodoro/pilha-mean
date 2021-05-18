@@ -29,7 +29,7 @@ export class ClienteService {
               nome: cliente.nome,
               fone: cliente.fone,
               email: cliente.email,
-              imagemURL: cliente.imagemURL
+              imagemURL: cliente.imagemURL,
             };
           });
         })
@@ -68,7 +68,7 @@ export class ClienteService {
           nome: nome,
           fone: fone,
           email: email,
-          imagemURL: dados.cliente.imagemURL
+          imagemURL: dados.cliente.imagemURL,
         };
         this.clientes.push(cliente);
         this.listaClientesAtualizada.next([...this.clientes]);
@@ -94,17 +94,49 @@ export class ClienteService {
       nome: string;
       fone: string;
       email: string;
+      imagemURL: string;
     }>(`http://localhost:3000/api/clientes/${idCliente}`);
   }
 
-  atualizarCliente(id: string, nome: string, fone: string, email: string) {
-    const cliente: Cliente = { id, nome, fone, email, imagemURL: null };
-    console.log('************** Vai atualizar... *************');
+  atualizarCliente(
+    id: string,
+    nome: string,
+    fone: string,
+    email: string,
+    imagem: File | string
+  ) {
+    // const cliente: Cliente = { id, nome, fone, email, imagemURL: null };
+    let clienteData: Cliente | FormData;
+    if (typeof imagem === 'object') {
+      clienteData = new FormData();
+      clienteData.append('id', id);
+      clienteData.append('nome', nome);
+      clienteData.append('fone', fone);
+      clienteData.append('email', email);
+      clienteData.append('imagem', imagem, nome);
+    } else {
+      clienteData = {
+        id: id,
+        nome: nome,
+        fone: fone,
+        email: email,
+        imagemURL: imagem,
+      };
+    }
+    console.log(typeof clienteData);
     this.httpClient
-      .put(`http://localhost:3000/api/clientes/${id}`, cliente)
+      .put(`http://localhost:3000/api/clientes/${id}`, clienteData)
       .subscribe((res) => {
         const copia = [...this.clientes];
-        const indice = copia.findIndex((cli) => cli.id === cliente.id);
+        const indice = copia.findIndex((cli) => cli.id === id);
+        const cliente: Cliente = {
+          id: id,
+          nome: nome,
+          fone: fone,
+          email: email,
+          imagemURL: '',
+        };
+
         copia[indice] = cliente;
         this.clientes = copia;
         this.listaClientesAtualizada.next([...this.clientes]);
