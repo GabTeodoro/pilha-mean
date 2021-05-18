@@ -51,12 +51,25 @@ router.post(
 );
 
 router.get("", (req, res, next) => {
-  Cliente.find().then((documents) => {
+  // console.log(req.query)
+  const pageSize = +req.query.pagasize;
+  const page = +req.query.page;
+  const consulta = Cliente.find();
+  if (pageSize && page) {
+    consulta.skip(pageSize * (page - 1)).limit(pageSize);
+  }
+  consulta.then((documents) => {
     res.status(200).json({
       mensagem: "Tudo OK",
       clientes: documents,
     });
   });
+  // Cliente.find().then((documents) => {
+  //   res.status(200).json({
+  //     mensagem: "Tudo OK",
+  //     clientes: documents,
+  //   });
+  // });
 });
 
 router.delete("/:id", (req, res, next) => {
