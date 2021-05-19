@@ -16,11 +16,11 @@ export class ClienteService {
   //   return [...this.clientes];
   // }
 
-  getClientes(pagesize: number, page: number): void {
-    const parametros = `?pagesize=${pagesize}&page=${page}`;
+  getClientes(pageSize: number, page: number): void {
+    // const parametros = `?pagesize=${pageSize}&page=${page}`;
     this.httpClient
       .get<{ mensagem: string; clientes: any; maxClientes: number }>(
-        'http://localhost:3000/api/clientes' + parametros
+        `http://localhost:3000/api/clientes?pageSize=${pageSize}&page=${page}`
       )
       .pipe(
         map((dados) => {
@@ -39,6 +39,7 @@ export class ClienteService {
         })
       )
       .subscribe((dados) => {
+        console.log(dados.clientes)
         this.clientes = dados.clientes;
         this.listaClientesAtualizada.next({clientes: [...this.clientes], maxClientes: dados.maxClientes});
       });
@@ -65,15 +66,6 @@ export class ClienteService {
   }
 
   removerCliente(id: string) {
-    // this.httpClient
-    //   .delete(`http://localhost:3000/api/clientes/:${id}`)
-    //   .subscribe(() => {
-    //     this.clientes = this.clientes.filter((cli) => {
-    //       return cli.id !== id;
-    //     });
-    //     this.listaClientesAtualizada.next([...this.clientes]);
-    //   });
-
     return this.httpClient.delete(`http://localhost:3000/api/clientes/${id}`)
   }
 

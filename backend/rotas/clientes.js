@@ -52,7 +52,7 @@ router.post(
 
 router.get("", (req, res, next) => {
   // console.log(req.query)
-  const pageSize = +req.query.pagasize;
+  const pageSize = +req.query.pageSize;
   const page = +req.query.page;
   const consulta = Cliente.find();
   let clientesEncontrados;
@@ -71,6 +71,16 @@ router.get("", (req, res, next) => {
         maxClientes: count,
       });
     });
+});
+
+router.get("/:id", (req, res, next) => {
+  Cliente.findById(req.params.id).then((cli) => {
+    if (cli) {
+      res.status(200).json(cli);
+    } else {
+      res.status(400).json({ mensagem: "Cliente não encontrado!" });
+    }
+  });
 });
 
 router.delete("/:id", (req, res, next) => {
@@ -103,15 +113,5 @@ router.put(
     res.status(200).json({ mensagem: "Atualização feita com sucesso" });
   }
 );
-
-router.get("/:id", (req, res, next) => {
-  Cliente.findById(req.params.id).then((cli) => {
-    if (cli) {
-      res.status(200).json(cli);
-    } else {
-      res.status(400).json({ mensagem: "Cliente não encontrado!" });
-    }
-  });
-});
 
 module.exports = router;
