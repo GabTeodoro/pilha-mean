@@ -1,15 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { UsuarioService } from '../auth/usuario.service';
 
 @Component({
   selector: 'app-cabecalho',
   templateUrl: './cabecalho.component.html',
-  styleUrls: ['./cabecalho.component.css']
+  styleUrls: ['./cabecalho.component.css'],
 })
-export class CabecalhoComponent implements OnInit {
+export class CabecalhoComponent implements OnInit, OnDestroy {
+  private authObserver: Subscription;
+  public autenticado: boolean = false;
+  constructor(private usuarioService: UsuarioService) {}
 
-  constructor() { }
-
-  ngOnInit(): void {
+  onLogout(){
+    this.usuarioService.logout();
   }
 
+  ngOnInit(): void {
+    this.authObserver = this.usuarioService
+      .getStatusSubject()
+      .subscribe((autenticado) => {
+        this.autenticado = autenticado;
+      });
+  }
+
+  ngOnDestroy() {
+    this.authObserver.unsubscribe();
+  }
 }
