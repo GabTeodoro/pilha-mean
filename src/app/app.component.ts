@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Cliente } from './clientes/cliente.model';
+import {UsuarioService} from './auth/usuario.service'
 
 @Component({
   selector: 'app-root',
@@ -7,9 +8,10 @@ import { Cliente } from './clientes/cliente.model';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  clientes: Cliente[] = [];
-  onClienteAdicionado(cliente) {
-    console.log(cliente);
-    this.clientes = [...this.clientes, cliente];
+
+  constructor(private usuarioService: UsuarioService){}
+  
+  ngOnInit(){
+    this.usuarioService.autenticarAutomaticamente()
   }
 }

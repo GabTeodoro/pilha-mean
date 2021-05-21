@@ -12,11 +12,12 @@ export class CabecalhoComponent implements OnInit, OnDestroy {
   public autenticado: boolean = false;
   constructor(private usuarioService: UsuarioService) {}
 
-  onLogout(){
+  onLogout() {
     this.usuarioService.logout();
   }
 
   ngOnInit(): void {
+    this.autenticado = this.usuarioService.isAutenticado();
     this.authObserver = this.usuarioService
       .getStatusSubject()
       .subscribe((autenticado) => {
