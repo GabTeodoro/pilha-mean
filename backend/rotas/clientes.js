@@ -2,7 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const router = express.Router();
 const Cliente = require("../models/cliente");
-const checkAuth = require('../middleware/check-auth')
+const checkAuth = require("../middleware/check-auth");
 const MIME_TYPE_EXTENSAO_MAPA = {
   "image/png": "png",
   "image/jpeg": "jpg",
@@ -25,7 +25,8 @@ const armazenamento = multer.diskStorage({
 });
 
 router.post(
-  "", checkAuth,
+  "",
+  checkAuth,
   multer({ storage: armazenamento }).single("imagem"),
   (req, res, next) => {
     const imagemURL = `${req.protocol}://${req.get("host")}`;
@@ -34,6 +35,7 @@ router.post(
       fone: req.body.fone,
       email: req.body.email,
       imagemURL: `${imagemURL}/imagens/${req.file.filename}`,
+      criador: req.dadosUsuario.idUsuario,
     });
     cliente.save().then((clienteInserido) => {
       res.status(201).json({
@@ -92,7 +94,8 @@ router.delete("/:id", checkAuth, (req, res, next) => {
 });
 
 router.put(
-  "/:id", checkAuth,
+  "/:id",
+  checkAuth,
   multer({ storage: armazenamento }).single("imagem"),
   (req, res, next) => {
     console.log(req.file);

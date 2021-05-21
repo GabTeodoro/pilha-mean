@@ -8,7 +8,10 @@ import { Router } from '@angular/router';
 @Injectable({ providedIn: 'root' })
 export class ClienteService {
   private clientes: Cliente[] = [];
-  private listaClientesAtualizada = new Subject<{clientes: Cliente[], maxClientes: number}>();
+  private listaClientesAtualizada = new Subject<{
+    clientes: Cliente[];
+    maxClientes: number;
+  }>();
 
   constructor(private httpClient: HttpClient, private router: Router) {}
 
@@ -32,6 +35,7 @@ export class ClienteService {
                 fone: cliente.fone,
                 email: cliente.email,
                 imagemURL: cliente.imagemURL,
+                criador: cliente.criador,
               };
             }),
             maxClientes: dados.maxClientes,
@@ -39,9 +43,12 @@ export class ClienteService {
         })
       )
       .subscribe((dados) => {
-        console.log(dados.clientes)
+        console.log(dados.clientes);
         this.clientes = dados.clientes;
-        this.listaClientesAtualizada.next({clientes: [...this.clientes], maxClientes: dados.maxClientes});
+        this.listaClientesAtualizada.next({
+          clientes: [...this.clientes],
+          maxClientes: dados.maxClientes,
+        });
       });
   }
 
@@ -66,7 +73,7 @@ export class ClienteService {
   }
 
   removerCliente(id: string) {
-    return this.httpClient.delete(`http://localhost:3000/api/clientes/${id}`)
+    return this.httpClient.delete(`http://localhost:3000/api/clientes/${id}`);
   }
 
   getCliente(idCliente: any) {
