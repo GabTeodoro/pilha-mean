@@ -11,7 +11,7 @@ module.exports = (req, res, next) => {
     next();
   } catch (err) {
     res.status(401).json({
-      mensagem: "Autenticação falhou",
+      mensagem: "Problemas com o token. Autenticacão naõ realizada.",
     });
   }
 };

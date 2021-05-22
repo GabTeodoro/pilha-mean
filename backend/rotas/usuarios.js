@@ -20,7 +20,7 @@ router.post("/signup", (req, res, next) => {
       })
       .catch((err) => {
         res.status(500).json({
-          erro: err,
+          mensagem: "Erro com as credenciais.",
         });
       });
   });
@@ -47,11 +47,13 @@ router.post("/login", (req, res, next) => {
       const token = jwt.sign({ email: user.email, id: use._id }, "minhasenha", {
         expiresIn: "1h",
       });
-      res.status(200).json({ token: token, expiresIn: 3600, idUsuario: user._id });
+      res
+        .status(200)
+        .json({ token: token, expiresIn: 3600, idUsuario: user._id });
     })
     .catch((err) => {
       return res.status(401).json({
-        mensagem: "Login falhou: " + err,
+        mensagem: "Erro ao login. Tente novamente mais tarde.",
       });
     });
 });

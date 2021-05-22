@@ -39,8 +39,9 @@ export class UsuarioService {
     };
     this.httpClient
       .post('http://localhost:3000/api/usuario/signup', authData)
-      .subscribe((resposta) => {
-        console.log(resposta);
+      .subscribe({
+        next: () => this.router.navigate(['/']),
+        error: () => this.authStatusSubject.next(false),
       });
   }
 

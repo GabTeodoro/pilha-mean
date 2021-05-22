@@ -37,19 +37,26 @@ router.post(
       imagemURL: `${imagemURL}/imagens/${req.file.filename}`,
       criador: req.dadosUsuario.idUsuario,
     });
-    cliente.save().then((clienteInserido) => {
-      res.status(201).json({
-        mensagem: "Cliente inserido",
-        // id: clienteInserido._id,
-        cliente: {
-          id: clienteInserido._id,
-          nome: clienteInserido.nome,
-          fone: clienteInserido.fone,
-          email: clienteInserido.email,
-          imagemURL: clienteInserido.imagemURL,
-        },
+    cliente
+      .save()
+      .then((clienteInserido) => {
+        res.status(201).json({
+          mensagem: "Cliente inserido",
+          // id: clienteInserido._id,
+          cliente: {
+            id: clienteInserido._id,
+            nome: clienteInserido.nome,
+            fone: clienteInserido.fone,
+            email: clienteInserido.email,
+            imagemURL: clienteInserido.imagemURL,
+          },
+        });
+      })
+      .catch((erro) => {
+        res.status(500).json({
+          mensagem: "Inserção ao cliente falhou. Tente novamente mais tarde.",
+        });
       });
-    });
   }
 );
 
@@ -73,17 +80,28 @@ router.get("", (req, res, next) => {
         clientes: clientesEncontrados,
         maxClientes: count,
       });
+    })
+    .catch((erro) => {
+      res.status(500).json({
+        mensagem: "Busca de clientes falhou. Tente novamente mais tarde.",
+      });
     });
 });
 
 router.get("/:id", (req, res, next) => {
-  Cliente.findById(req.params.id).then((cli) => {
-    if (cli) {
-      res.status(200).json(cli);
-    } else {
-      res.status(400).json({ mensagem: "Cliente não encontrado!" });
-    }
-  });
+  Cliente.findById(req.params.id)
+    .then((cli) => {
+      if (cli) {
+        res.status(200).json(cli);
+      } else {
+        res.status(400).json({ mensagem: "Cliente não encontrado!" });
+      }
+    })
+    .catch((erro) => {
+      res.status(500).json({
+        mensagem: "Busca de cliente falhou. Tente novamente mais tarde.",
+      });
+    });
 });
 
 router.delete("/:id", checkAuth, (req, res, next) => {
@@ -91,14 +109,20 @@ router.delete("/:id", checkAuth, (req, res, next) => {
   Cliente.deleteOne({
     _id: req.params.id,
     criador: req.dadosUsuario.idUsuaario,
-  }).then((resultado) => {
-    console.log(resultado);
-    if (resultado.n > 0) {
-      res.status(200).json({ mensagem: "Cliente removido" });
-    } else {
-      res.status(401).json({ mensagem: "Remoção não permitida" });
-    }
-  });
+  })
+    .then((resultado) => {
+      console.log(resultado);
+      if (resultado.n > 0) {
+        res.status(200).json({ mensagem: "Cliente removido" });
+      } else {
+        res.status(401).json({ mensagem: "Remoção não permitida" });
+      }
+    })
+    .catch((erro) => {
+      res.status(500).json({
+        mensagem: "Remoção de clientes falhou. Tente novamente mais tarde.",
+      });
+    });
 });
 
 router.put(
@@ -123,14 +147,21 @@ router.put(
     Cliente.updateOne(
       { _id: req.params.id, criador: req.dadosUsuario.idUsuario },
       cliente
-    ).then((resultado) => {
-      console.log(resultado);
-      if (resultado.nModified > 0) {
-        res.status(200).json({ mensagem: "Atualização feita com sucesso" });
-      } else {
-        res.status(401).json({ mensagem: "Atualização não permitida" });
-      }
-    });
+    )
+      .then((resultado) => {
+        console.log(resultado);
+        if (resultado.nModified > 0) {
+          res.status(200).json({ mensagem: "Atualização feita com sucesso" });
+        } else {
+          res.status(401).json({ mensagem: "Atualização não permitida" });
+        }
+      })
+      .catch((erro) => {
+        res.status(500).json({
+          mensagem:
+            "Atualização de cliente falhou. Tente novamente mais tarde.",
+        });
+      });
   }
 );
 
