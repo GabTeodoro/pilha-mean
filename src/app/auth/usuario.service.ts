@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 export class UsuarioService {
   private token: string;
   private tokenTimer: NodeJS.Timer;
+  private idUsuario: string;
   private authStatusSubject = new Subject<boolean>();
   private autenticado: boolean = false;
 
@@ -23,6 +24,10 @@ export class UsuarioService {
 
   public getStatusSubject() {
     return this.authStatusSubject.asObservable();
+  }
+
+  public getIdUsuario() {
+    return this.idUsuario;
   }
 
   constructor(private httpClient: HttpClient, private router: Router) {}
@@ -39,9 +44,14 @@ export class UsuarioService {
       });
   }
 
-  private salvarDadosDeAutenticacao(token: string, validade: Date) {
+  private salvarDadosDeAutenticacao(
+    token: string,
+    validade: Date,
+    idUsuario: string
+  ) {
     localStorage.setItem('token', token);
     localStorage.setItem('validade', validade.toISOString());
+    localStorage.setItem('idUsuario', idUsuario);
   }
 
   login(email: string, senha: string) {
@@ -50,7 +60,7 @@ export class UsuarioService {
       password: senha,
     };
     this.httpClient
-      .post<{ token: string; expiresIn: number }>(
+      .post<{ token: string; expiresIn: number; idUsuario: string }>(
         'http://localhost:3000/api/login',
         authData
       )
@@ -62,10 +72,12 @@ export class UsuarioService {
             this.logout();
           }, tempoValidadeToken * 1000);
           this.autenticado = true;
+          this.idUsuario = resposta.idUsuario;
           this.authStatusSubject.next(true);
           this.salvarDadosDeAutenticacao(
             this.token,
-            new Date(new Date().getTime() + tempoValidadeToken * 1000)
+            new Date(new Date().getTime() + tempoValidadeToken * 1000),
+            this.idUsuario
           );
           this.router.navigate(['/']);
         }
@@ -75,12 +87,14 @@ export class UsuarioService {
   private removerDadosDeAutenticacao() {
     localStorage.removeItem('token');
     localStorage.removeItem('validade');
+    localStorage.removeItem('idUsuario');
   }
 
   logout() {
     this.token = null;
     this.authStatusSubject.next(false);
     clearTimeout(this.tokenTimer);
+    this.idUsuario = null;
     this.removerDadosDeAutenticacao();
     this.router.navigate['/'];
   }
@@ -95,6 +109,7 @@ export class UsuarioService {
         this.token = dadosAutenticacao.token;
         console.log(dadosAutenticacao.token);
         this.autenticado = true;
+        this.idUsuario = dadosAutenticacao.idUsuario;
         this.tokenTimer = setTimeout(() => {
           this.logout();
         }, diferenca);

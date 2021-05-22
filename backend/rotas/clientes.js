@@ -87,9 +87,17 @@ router.get("/:id", (req, res, next) => {
 });
 
 router.delete("/:id", checkAuth, (req, res, next) => {
-  Cliente.deleteOne({ _id: req.params.id }).then((resultado) => {
+  console.log("id:", req.params.id);
+  Cliente.deleteOne({
+    _id: req.params.id,
+    criador: req.dadosUsuario.idUsuaario,
+  }).then((resultado) => {
     console.log(resultado);
-    res.status(200).json({ mensagem: "Cliente removido" });
+    if (resultado.n > 0) {
+      res.status(200).json({ mensagem: "Cliente removido" });
+    } else {
+      res.status(401).json({ mensagem: "Remoção não permitida" });
+    }
   });
 });
 
@@ -110,11 +118,19 @@ router.put(
       fone: req.body.fone,
       email: req.body.email,
       imagemURL: imagemURL,
+      criador: req.dadosUsuario.idUsuario,
     });
-    Cliente.updateOne({ _id: req.params.id }, cliente).then((resultado) => {
+    Cliente.updateOne(
+      { _id: req.params.id, criador: req.dadosUsuario.idUsuario },
+      cliente
+    ).then((resultado) => {
       console.log(resultado);
+      if (resultado.nModified > 0) {
+        res.status(200).json({ mensagem: "Atualização feita com sucesso" });
+      } else {
+        res.status(401).json({ mensagem: "Atualização não permitida" });
+      }
     });
-    res.status(200).json({ mensagem: "Atualização feita com sucesso" });
   }
 );
 

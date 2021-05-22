@@ -9,7 +9,7 @@
     </div>
     <p>Fone: {{ cliente.fone }}</p>
     <p>Email: {{ cliente.email }}</p>
-    <mat-action-row *ngIf="autenticado">
+    <mat-action-row *ngIf="autenticado && idUsuario === cliente.criador">
       <button mat-button color="primary" [routerLink]="['/editar', cliente.id]">
         EDITAR
       </button>

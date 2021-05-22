@@ -84,6 +84,7 @@ export class ClienteService {
       fone: string;
       email: string;
       imagemURL: string;
+      criador: string;
     }>(`http://localhost:3000/api/clientes/${idCliente}`);
   }
 
@@ -110,6 +111,7 @@ export class ClienteService {
         fone: fone,
         email: email,
         imagemURL: imagem,
+        criador: null,
       };
     }
     console.log(typeof clienteData);
